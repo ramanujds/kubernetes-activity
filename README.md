@@ -60,6 +60,9 @@ Two REST API services that call each other, deployed on Kubernetes.
 ```bash
 # Build orders-service (Node.js)
 docker build -t orders-service:latest ./service-a
+```
+
+```bash
 
 # Build products-service (Python FastAPI)
 docker build -t products-service:latest ./service-b
