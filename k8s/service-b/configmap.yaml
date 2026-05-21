@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: products-service-config
+  namespace: microservices
+data:
+  APP_ENV: "production"
+  PORT: "8000"
+  SERVICE_A_URL: "http://orders-service:3000"

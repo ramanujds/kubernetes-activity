@@ -1,0 +1,27 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: microservices-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /orders
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.ordersService.name }}
+                port:
+                  number: {{ .Values.ordersService.port }}
+          - path: /products
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.productsService.name }}
+                port:
+                  number: {{ .Values.productsService.port }}
+{{- end }}

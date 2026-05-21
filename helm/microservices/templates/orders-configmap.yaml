@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.ordersService.name }}-config
+  namespace: {{ .Values.namespace }}
+data:
+  APP_ENV: {{ .Values.ordersService.env.APP_ENV | quote }}
+  PORT: {{ .Values.ordersService.env.PORT | quote }}
+  SERVICE_B_URL: "http://{{ .Values.productsService.name }}:{{ .Values.productsService.port }}"
