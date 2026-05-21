@@ -1,0 +1,42 @@
+namespace: microservices
+
+ordersService:
+  name: orders-service
+  image:
+    repository: orders-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 3000
+  env:
+    APP_ENV: "production"
+    PORT: "3000"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
+
+productsService:
+  name: products-service
+  image:
+    repository: products-service
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 2
+  port: 8000
+  env:
+    APP_ENV: "production"
+    PORT: "8000"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "250m"
+      memory: "256Mi"
+
+ingress:
+  enabled: true

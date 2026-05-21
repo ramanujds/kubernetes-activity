@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.ordersService.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.ordersService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.ordersService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.ordersService.name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/orders-configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Values.ordersService.name }}
+          image: "{{ .Values.ordersService.image.repository }}:{{ .Values.ordersService.image.tag }}"
+          imagePullPolicy: {{ .Values.ordersService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.ordersService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.ordersService.name }}-config
+          resources:
+            {{- toYaml .Values.ordersService.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ordersService.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ordersService.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10

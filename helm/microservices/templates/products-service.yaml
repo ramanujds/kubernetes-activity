@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.productsService.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.productsService.name }}
+  ports:
+    - port: {{ .Values.productsService.port }}
+      targetPort: {{ .Values.productsService.port }}
+  type: ClusterIP

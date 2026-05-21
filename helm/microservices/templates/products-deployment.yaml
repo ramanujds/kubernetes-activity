@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.productsService.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.productsService.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.productsService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.productsService.name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/products-configmap.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: {{ .Values.productsService.name }}
+          image: "{{ .Values.productsService.image.repository }}:{{ .Values.productsService.image.tag }}"
+          imagePullPolicy: {{ .Values.productsService.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.productsService.port }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.productsService.name }}-config
+          resources:
+            {{- toYaml .Values.productsService.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.productsService.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.productsService.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
